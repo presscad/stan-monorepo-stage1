@@ -26,8 +26,8 @@ help:
 ##
 # Library locations
 ##
-STAN ?= stan/
-MATH ?= $(STAN)lib/stan_math/
+STAN ?= ../stan/
+MATH ?= ../math/
 
 ##########################
 ## FIXME(DL): Default compiler options broken in math tagged v2.18.1.

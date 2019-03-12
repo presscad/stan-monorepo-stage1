@@ -20,7 +20,7 @@ help:
 # Library locations
 ##
 STAN ?=
-MATH ?= lib/stan_math/
+MATH ?= ../math
 
 -include $(MATH)make/default_compiler_options
 CXXFLAGS += -I src -isystem $(MATH) -DFUSION_MAX_VECTOR_SIZE=12 -Wno-unused-local-typedefs
