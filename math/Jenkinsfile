@@ -1,6 +1,4 @@
 #!/usr/bin/env groovy
-@Library('StanUtils')
-import org.stan.Utils
 
 def setupCC(Boolean failOnError = true) {
     errorStr = failOnError ? "-Werror " : ""
@@ -19,8 +17,6 @@ def runTests(String testPath) {
     try { sh "./runTests.py -j${env.PARALLEL} ${testPath}" }
     finally { junit 'test/**/*.xml' }
 }
-
-def utils = new org.stan.Utils()
 
 def isBranch(String b) { env.BRANCH_NAME == b }
 
@@ -52,11 +48,6 @@ pipeline {
             when {
                 not { branch 'develop' }
                 not { branch 'master' }
-            }
-            steps {
-                script {
-                    utils.killOldBuilds()
-                }
             }
         }
         stage("Clang-format") {
@@ -253,13 +244,5 @@ pipeline {
                 warnings canRunOnFailed: true, consoleParsers: [[parserName: 'GNU C Compiler 4 (gcc)'], [parserName: 'Clang (LLVM based)']]
             }
         }
-        success {
-            script {
-                utils.updateUpstream(env, 'stan')
-                utils.mailBuildResults("SUCCESSFUL")
-            }
-        }
-        unstable { script { utils.mailBuildResults("UNSTABLE", alsoNotify()) } }
-        failure { script { utils.mailBuildResults("FAILURE", alsoNotify()) } }
     }
 }

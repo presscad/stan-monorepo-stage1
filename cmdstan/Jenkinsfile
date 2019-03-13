@@ -1,15 +1,7 @@
-@Library('StanUtils')
-import org.stan.Utils
-
-def utils = new org.stan.Utils()
-
 def checkout_pr(String repo, String pr) {
     prNumber = pr.tokenize('-').last()
-    if (repo == "math") {
-        dir = "stan/lib/stan_math"
-    } else {
-        dir = repo
-    }
+    dir = repo
+
     sh """
         cd ${dir}
         git clean -xffd
@@ -35,8 +27,6 @@ pipeline {
     parameters {
         string(defaultValue: '', name: 'stan_pr',
           description: "Stan PR to test against. Will check out this PR in the downstream Stan repo.")
-        string(defaultValue: '', name: 'math_pr',
-          description: "Math PR to test against. Will check out this PR in the downstream Math repo.")
     }
     stages {
         stage('Kill previous builds') {
@@ -45,7 +35,6 @@ pipeline {
                 not { branch 'master' }
                 not { branch 'downstream_tests' }
             }
-            steps { script { utils.killOldBuilds() } }
         }
         stage('Clean & Setup') {
             agent any
@@ -56,9 +45,6 @@ pipeline {
                 script {
                     if (params.stan_pr != '') {
                         checkout_pr("stan", params.stan_pr)
-                    }
-                    if (params.math_pr != '') {
-                        checkout_pr("math", params.math_pr)
                     }
                 }
                 stash 'CmdStanSetup'
