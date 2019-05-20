@@ -6,7 +6,7 @@
 #    ~/.config/stan/make.local
 #    make/local
 # Variables in make/local is loaded after ~/.config/stan/make.local
-
+PROJECT_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST)))/../)
 
 ## 'help' is the default make target.
 help:
@@ -14,7 +14,8 @@ help:
 -include $(HOME)/.config/stan/make.local  # user-defined variables
 -include make/local                       # user-defined variables
 
-MATH ?= lib/stan_math/
+
+MATH ?= $(PROJECT_DIR)/math/
 ifeq ($(OS),Windows_NT)
   O_STANC ?= 3
 endif
@@ -48,14 +49,6 @@ help:
 	@echo '  - doxygen        : Builds the API documentation. The documentation is located'
 	@echo '                     doc/api/'
 	@echo '                     (requires doxygen installation)'
-	@echo '  Submodule:'
-	@echo '  - math-revert    : Reverts the Stan Math Library git submodule to the hash'
-	@echo '                     recorded in the Stan library'
-	@echo '  - math-update    : Updates the Stan Math Library git submodule branch,'
-	@echo '                     e.g. if the Math branch is `develop`, it will fetch the'
-	@echo '                     the latest version of `develop`'
-	@echo '  - math-update/<branch-name> : Updates the Stan Math Library git submodule to'
-	@echo '                     the branch specified'
 	@echo ''
 	@echo 'Tests:'
 	@echo ''
@@ -107,21 +100,6 @@ clean-all: clean clean-dox clean-deps clean-libraries
 	$(RM) -r test bin
 	@echo '  removing .o files'
 	$(shell find src -type f -name '*.o' -exec rm {} +)
-
-##
-# Submodule related tasks
-##
-.PHONY: math-revert
-math-revert:
-	git submodule update --init --recursive
-
-.PHONY: math-update
-math-update:
-	git submodule init
-	git submodule update --recursive
-
-math-update/%: math-update
-	cd $(MATH) && git fetch --all && git checkout $* && git pull
 
 ##
 # Debug target that allows you to print a variable

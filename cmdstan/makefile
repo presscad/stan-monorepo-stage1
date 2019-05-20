@@ -15,14 +15,16 @@
 # - STANCFLAGS: Extra options for calling stanc
 ##
 
+PROJECT_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST)))/../)
+
 # The default target of this Makefile is...
 help:
 
 -include $(HOME)/.config/stan/make.local  # user-defined variables
 -include make/local                       # user-defined variables
 
-STAN ?= stan/
-MATH ?= $(STAN)lib/stan_math/
+STAN ?= $(PROJECT_DIR)/stan/
+MATH ?= $(PROJECT_DIR)/math/
 ifeq ($(OS),Windows_NT)
   O_STANC ?= 3
 endif
@@ -121,15 +123,6 @@ help-dev:
 	@echo '  to initialize the Stan repository with:'
 	@echo '     make stan-update'
 	@echo ''
-	@echo ''
-	@echo 'Developer relevant targets:'
-	@echo '  Stan management targets:'
-	@echo '  - stan-update    : Initializes and updates the Stan repository'
-	@echo '  - stan-update/*  : Updates the Stan repository to the specified'
-	@echo '                     branch or commit hash.'
-	@echo '  - stan-revert    : Reverts changes made to Stan library back to'
-	@echo '                     what is in the repository.'
-	@echo ''
 	@echo 'Model related:'
 	@echo '- bin/stanc$(EXE): Build the Stan compiler.'
 	@echo '- bin/print$(EXE): Build the print utility. (deprecated)'
@@ -181,25 +174,6 @@ clean-all: clean clean-deps clean-libraries clean-manual
 	$(RM) $(wildcard $(STAN)src/stan/model/model_header.hpp.gch)
 
 ##
-# Submodule related tasks
-##
-
-.PHONY: stan-update
-stan-update :
-	git submodule update --init --recursive
-
-stan-update/%: stan-update
-	cd stan && git fetch --all && git checkout $* && git pull
-
-stan-pr/%: stan-update
-	cd stan && git reset --hard origin/develop && git checkout $* && git checkout develop && git merge $* --ff --no-edit --strategy=ours
-
-.PHONY: stan-revert
-stan-revert:
-	git submodule update --init --recursive
-
-
-##
 # Manual related
 ##
 
@@ -210,8 +184,6 @@ manual: src/docs/cmdstan-guide/cmdstan-guide.pdf
 
 %.pdf: %.tex
 	cd $(dir $@); latexmk -pdf -pdflatex="pdflatex -file-line-error" -use-make $(notdir $^)
-
-
 
 ##
 # Debug target that allows you to print a variable
