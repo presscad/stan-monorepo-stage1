@@ -11,9 +11,9 @@ import sys
 import subprocess
 import time
 import imp
-mathRunTests = imp.load_source('runTests',
-        os.path.join(os.path.dirname(os.path.abspath(__file__)),
-            "lib", "stan_math", "runTests.py"))
+
+mathRunTestPath = os.path.abspath(os.path.join(os.path.dirname(__file__), '../math/runTests.py'))
+mathRunTests = imp.load_source('runTests', mathRunTestPath)
 
 # set up good makefile target name
 def mungeName(name):
