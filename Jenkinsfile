@@ -3,9 +3,9 @@ pipeline {
   stages {
     stage('Header Check') {
       steps {
-        sh '''pushd math
+        sh '''cd math
 make -j${env.PARALLEL} test-headers
-popd'''
+cd ..'''
       }
     }
   }
