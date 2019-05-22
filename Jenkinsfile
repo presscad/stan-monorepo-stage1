@@ -1,13 +1,11 @@
 pipeline {
   agent none
   stages {
-    stage('Change to subdirs') {
-      parallel {
-        stage('math') {
-          agent any
-          steps {
-            dir(path: 'math')
-            sh '''"""#!/bin/bash
+    stage('math') {
+      agent any
+      steps {
+        dir(path: 'math')
+        sh '''"""#!/bin/bash
 set -x
 git checkout -b ${branchName()}
 clang-format --version
@@ -23,24 +21,6 @@ if [[ `git diff` != "" ]]; then
     echo "Please \'git pull\' before continuing to develop."
     exit 1
 fi"""'''
-          }
-        }
-        stage('stan') {
-          steps {
-            dir(path: 'stan') {
-              pwd()
-            }
-
-          }
-        }
-        stage('cmdstan') {
-          steps {
-            dir(path: 'cmdstan') {
-              pwd()
-            }
-
-          }
-        }
       }
     }
   }
