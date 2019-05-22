@@ -3,19 +3,28 @@ pipeline {
   stages {
     stage('error') {
       parallel {
-        stage('error') {
+        stage('math') {
           steps {
-            dir(path: 'math')
+            dir(path: 'math') {
+              pwd()
+            }
+
           }
         }
-        stage('') {
+        stage('stan') {
           steps {
-            dir(path: 'stan')
+            dir(path: 'stan') {
+              pwd()
+            }
+
           }
         }
-        stage('') {
+        stage('cmdstan') {
           steps {
-            dir(path: 'cmdstan')
+            dir(path: 'cmdstan') {
+              pwd()
+            }
+
           }
         }
       }
