@@ -1,9 +1,23 @@
 pipeline {
   agent any
   stages {
-    stage('') {
-      steps {
-        dir(path: 'math')
+    stage('error') {
+      parallel {
+        stage('error') {
+          steps {
+            dir(path: 'math')
+          }
+        }
+        stage('') {
+          steps {
+            dir(path: 'stan')
+          }
+        }
+        stage('') {
+          steps {
+            dir(path: 'cmdstan')
+          }
+        }
       }
     }
   }
